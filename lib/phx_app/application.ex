@@ -13,9 +13,11 @@ defmodule PhxApp.Application do
       # Start the PubSub system
       {Phoenix.PubSub, name: PhxApp.PubSub},
       # Start the Endpoint (http/https)
-      PhxAppWeb.Endpoint
+      PhxAppWeb.Endpoint,
       # Start a worker by calling: PhxApp.Worker.start_link(arg)
       # {PhxApp.Worker, arg}
+      {Registry, keys: :unique, name: :dashboard_registry},
+      PhxApp.Dashboard.RoomSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
