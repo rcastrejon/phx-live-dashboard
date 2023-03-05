@@ -18,7 +18,7 @@ defmodule PhxAppWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
-    live "dashboard", DashboardLive
+    live "/dashboard", DashboardLive
   end
 
   # Other scopes may use custom stacks.

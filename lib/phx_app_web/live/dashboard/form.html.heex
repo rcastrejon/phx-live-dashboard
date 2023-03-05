@@ -1,0 +1,13 @@
+<div>
+  <.form for={@form} phx-submit="add" phx-target={@myself}>
+    <div class="flex-col space-y-2">
+      <.input field={@form["name"]} />
+      <div class="flex">
+        <div class="grow" />
+        <button class="bg-indigo-500 px-3 h-8 rounded text-sm text-white hover:bg-indigo-600 active:bg-indigo-700 transition-colors">
+          Add
+        </button>
+      </div>
+    </div>
+  </.form>
+</div>

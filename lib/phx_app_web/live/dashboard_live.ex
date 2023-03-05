@@ -2,14 +2,15 @@ defmodule PhxAppWeb.DashboardLive do
   use PhxAppWeb, :live_view
   alias PhxApp.Dashboard.Room
   alias PhxAppWeb.Endpoint
+  alias PhxAppWeb.Dashboard
 
   def mount(_params, _session, socket) do
     if connected?(socket) do
       names = Room.join("dashboard")
       Endpoint.subscribe("dashboard")
-      {:ok, assign(socket, :names, names)}
+      {:ok, assign(socket, names: names)}
     else
-      {:ok, assign(socket, :names, [])}
+      {:ok, assign(socket, names: [])}
     end
   end
 

@@ -1,5 +1,5 @@
 defmodule PhxApp.Dashboard.Room do
-  use GenServer
+  use GenServer, restart: :transient
   alias PhxApp.Dashboard
   alias Phoenix.PubSub
 
