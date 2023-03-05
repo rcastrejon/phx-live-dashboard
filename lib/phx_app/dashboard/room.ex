@@ -1,8 +1,11 @@
 defmodule PhxApp.Dashboard.Room do
   use GenServer
   alias PhxApp.Dashboard
+  alias Phoenix.PubSub
 
   @registry :dashboard_registry
+  @pubsub PhxApp.PubSub
+  @topic "dashboard"
 
   def start_link(name) do
     GenServer.start_link(__MODULE__, [], name: via_tuple(name))
@@ -30,15 +33,20 @@ defmodule PhxApp.Dashboard.Room do
   end
 
   def insert_name(room_name, name, position \\ 0) do
-    GenServer.call(via_tuple(room_name), {:insert_name, name, position})
+    names = GenServer.call(via_tuple(room_name), {:insert_name, name, position})
+    PubSub.broadcast(@pubsub, @topic, {:update_names, names})
   end
 
   def remove_name(room_name, position) do
-    GenServer.call(via_tuple(room_name), {:remove_name, position})
+    names = GenServer.call(via_tuple(room_name), {:remove_name, position})
+    PubSub.broadcast(@pubsub, @topic, {:update_names, names})
   end
 
   def change_name_position(room_name, from_position, to_position) do
-    GenServer.call(via_tuple(room_name), {:change_name_position, from_position, to_position})
+    names =
+      GenServer.call(via_tuple(room_name), {:change_name_position, from_position, to_position})
+
+    PubSub.broadcast(@pubsub, @topic, {:update_names, names})
   end
 
   defp via_tuple(name) do
@@ -59,12 +67,12 @@ defmodule PhxApp.Dashboard.Room do
     {:noreply, %{state | clients: List.delete(clients, client_pid)}}
   end
 
-  def handle_call({:join, client_pid}, _from, %{clients: clients} = state) do
+  def handle_call({:join, client_pid}, _from, %{clients: clients, names: names} = state) do
     clients =
       MapSet.new([client_pid | clients])
       |> MapSet.to_list()
 
-    {:reply, clients, %{state | clients: clients}}
+    {:reply, names, %{state | clients: clients}}
   end
 
   def handle_call({:insert_name, new_name, position}, _from, %{names: names} = state) do
